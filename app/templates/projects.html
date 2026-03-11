@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Projects — Construction Cost Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold">Projects</h1>
+    <a href="{{ url_for('main.new_project') }}" class="btn btn-warning">
+        <i class="bi bi-plus-circle"></i> New Project
+    </a>
+</div>
+
+{% if projects %}
+<div class="row">
+    {% for project in projects %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">{{ project.name }}</h5>
+                <p class="text-muted mb-1">{{ project.client }}</p>
+                <p class="mb-1">Budget: <strong>${{ "%.2f"|format(project.budget) }}</strong></p>
+                <p class="mb-1">Start: {{ project.start_date }}</p>
+                <span class="badge bg-success">{{ project.status }}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    No projects yet. <a href="{{ url_for('main.new_project') }}">Create your first project!</a>
+</div>
+{% endif %}
+{% endblock %}

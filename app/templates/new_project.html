@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}New Project — Construction Cost Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1 class="fw-bold mb-4">New Project</h1>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Project Name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Client</label>
+                <input type="text" name="client" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Budget ($)</label>
+                <input type="number" name="budget" class="form-control" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <input type="date" name="start_date" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-warning w-100">
+                <i class="bi bi-plus-circle"></i> Create Project
+            </button>
+            <a href="{{ url_for('main.projects') }}" class="btn btn-outline-secondary w-100 mt-2">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}
