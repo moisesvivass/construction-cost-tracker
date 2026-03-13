@@ -64,3 +64,15 @@ def add_expense(project_id):
 
     flash("Expense added successfully!", "success")
     return redirect(url_for("main.project_detail", project_id=project.id))
+
+# ── Delete expense ───────────────────────────────────────────────────────────
+@main.route("/expense/<int:expense_id>/delete", methods=["POST"])
+def delete_expense(expense_id):
+    expense = Expense.query.get_or_404(expense_id)
+    project_id = expense.project_id
+
+    db.session.delete(expense)
+    db.session.commit()
+
+    flash("Expense deleted successfully!", "success")
+    return redirect(url_for("main.project_detail", project_id=project_id))
