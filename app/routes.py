@@ -97,11 +97,11 @@ def new_project():
 
         if not name or not client:
             flash("Name and client are required.", "danger")
-            return redirect(url_for("main.new_project"))
+            return render_template("new_project.html", form_data=request.form)
 
         if len(name) > 100 or len(client) > 100:
             flash("Name and client must be under 100 characters.", "danger")
-            return redirect(url_for("main.new_project"))
+            return render_template("new_project.html", form_data=request.form)
 
         try:
             budget = float(request.form["budget"])
@@ -109,13 +109,13 @@ def new_project():
                 raise ValueError
         except ValueError:
             flash("Budget must be a positive number.", "danger")
-            return redirect(url_for("main.new_project"))
+            return render_template("new_project.html", form_data=request.form)
 
         try:
             start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
         except ValueError:
             flash("Invalid date format.", "danger")
-            return redirect(url_for("main.new_project"))
+            return render_template("new_project.html", form_data=request.form)
 
         project = Project(name=name, client=client, budget=budget,
                           start_date=start_date, user_id=current_user.id)
@@ -125,7 +125,7 @@ def new_project():
         flash("Project created successfully!", "success")
         return redirect(url_for("main.projects"))
 
-    return render_template("new_project.html")
+    return render_template("new_project.html", form_data=None)
 
 
 # ── Project detail ───────────────────────────────────────────────────────────
@@ -186,7 +186,6 @@ def add_expense(project_id):
 @login_required
 def delete_expense(expense_id):
     expense = Expense.query.get_or_404(expense_id)
-
     project = Project.query.filter_by(id=expense.project_id, user_id=current_user.id).first_or_404()
 
     db.session.delete(expense)
@@ -208,11 +207,11 @@ def edit_project(project_id):
 
         if not name or not client:
             flash("Name and client are required.", "danger")
-            return redirect(url_for("main.edit_project", project_id=project_id))
+            return render_template("edit_project.html", project=project, form_data=request.form)
 
         if len(name) > 100 or len(client) > 100:
             flash("Name and client must be under 100 characters.", "danger")
-            return redirect(url_for("main.edit_project", project_id=project_id))
+            return render_template("edit_project.html", project=project, form_data=request.form)
 
         try:
             budget = float(request.form["budget"])
@@ -220,13 +219,13 @@ def edit_project(project_id):
                 raise ValueError
         except ValueError:
             flash("Budget must be a positive number.", "danger")
-            return redirect(url_for("main.edit_project", project_id=project_id))
+            return render_template("edit_project.html", project=project, form_data=request.form)
 
         try:
             start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
         except ValueError:
             flash("Invalid date format.", "danger")
-            return redirect(url_for("main.edit_project", project_id=project_id))
+            return render_template("edit_project.html", project=project, form_data=request.form)
 
         project.name       = name
         project.client     = client
@@ -238,7 +237,8 @@ def edit_project(project_id):
         flash("Project updated successfully!", "success")
         return redirect(url_for("main.project_detail", project_id=project.id))
 
-    return render_template("edit_project.html", project=project)
+    return render_template("edit_project.html", project=project, form_data=None)
+
 
 # ── Delete project ───────────────────────────────────────────────────────────
 @main.route("/project/<int:project_id>/delete", methods=["POST"])
@@ -252,12 +252,12 @@ def delete_project(project_id):
     flash("Project deleted successfully!", "success")
     return redirect(url_for("main.projects"))
 
+
 # ── Edit expense ─────────────────────────────────────────────────────────────
 @main.route("/expense/<int:expense_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_expense(expense_id):
     expense = Expense.query.get_or_404(expense_id)
-
     project = Project.query.filter_by(id=expense.project_id, user_id=current_user.id).first_or_404()
 
     if request.method == "POST":
@@ -266,11 +266,11 @@ def edit_expense(expense_id):
 
         if not description:
             flash("Description is required.", "danger")
-            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+            return render_template("edit_expense.html", expense=expense, form_data=request.form)
 
         if len(description) > 200:
             flash("Description must be under 200 characters.", "danger")
-            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+            return render_template("edit_expense.html", expense=expense, form_data=request.form)
 
         try:
             amount = float(request.form["amount"])
@@ -278,13 +278,13 @@ def edit_expense(expense_id):
                 raise ValueError
         except ValueError:
             flash("Amount must be a positive number.", "danger")
-            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+            return render_template("edit_expense.html", expense=expense, form_data=request.form)
 
         try:
             date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
         except ValueError:
             flash("Invalid date format.", "danger")
-            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+            return render_template("edit_expense.html", expense=expense, form_data=request.form)
 
         expense.description = description
         expense.category    = category
@@ -296,4 +296,4 @@ def edit_expense(expense_id):
         flash("Expense updated successfully!", "success")
         return redirect(url_for("main.project_detail", project_id=project.id))
 
-    return render_template("edit_expense.html", expense=expense)
+    return render_template("edit_expense.html", expense=expense, form_data=None)

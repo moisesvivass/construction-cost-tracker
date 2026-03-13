@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Edit {{ project.name }} — CostTracker{% endblock %}
-
 {% block content %}
-
-<!-- Flash messages -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -14,55 +11,45 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-
-<!-- Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2 class="fw-bold mb-0">
     <i class="bi bi-pencil-square text-warning"></i> Edit Project
   </h2>
-  <a href="{{ url_for('main.project_detail', project_id=project.id) }}" 
+  <a href="{{ url_for('main.project_detail', project_id=project.id) }}"
      class="btn btn-outline-secondary btn-sm">
     <i class="bi bi-arrow-left"></i> Back to Project
   </a>
 </div>
-
-<!-- Edit Form -->
 <div class="card shadow-sm">
   <div class="card-body">
     <form action="{{ url_for('main.edit_project', project_id=project.id) }}" method="POST">
       <div class="row g-3">
-
         <div class="col-md-6">
           <label class="form-label">Project Name</label>
           <input type="text" name="name" class="form-control"
-                 value="{{ project.name }}" required>
+                 value="{{ form_data.name if form_data else project.name }}" required>
         </div>
-
         <div class="col-md-6">
           <label class="form-label">Client</label>
           <input type="text" name="client" class="form-control"
-                 value="{{ project.client }}" required>
+                 value="{{ form_data.client if form_data else project.client }}" required>
         </div>
-
         <div class="col-md-6">
           <label class="form-label">Budget ($)</label>
-          <input type="number" name="budget" class="form-control"
-                 value="{{ project.budget }}" step="0.01" min="0" required>
+          <input type="number" name="budget" class="form-control" step="0.01" min="0"
+                 value="{{ form_data.budget if form_data else project.budget }}" required>
         </div>
-
         <div class="col-md-6">
           <label class="form-label">Start Date</label>
           <input type="date" name="start_date" class="form-control"
-                 value="{{ project.start_date }}" required>
+                 value="{{ form_data.start_date if form_data else project.start_date }}" required>
         </div>
-
       </div>
-
       <div class="mt-4 d-flex gap-2">
         <button type="submit" class="btn btn-warning fw-semibold">
           <i class="bi bi-save"></i> Save Changes
         </button>
-        <a href="{{ url_for('main.project_detail', project_id=project.id) }}" 
+        <a href="{{ url_for('main.project_detail', project_id=project.id) }}"
            class="btn btn-outline-secondary">
           Cancel
         </a>
@@ -70,5 +57,4 @@
     </form>
   </div>
 </div>
-
 {% endblock %}
