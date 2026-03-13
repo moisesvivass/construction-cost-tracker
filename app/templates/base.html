@@ -13,6 +13,16 @@
             <a class="navbar-brand fw-bold" href="/">
                 <i class="bi bi-building"></i> CostTracker
             </a>
+            {% if current_user.is_authenticated %}
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-white-50 small">
+                    <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('main.logout') }}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+            {% endif %}
         </div>
     </nav>
 
