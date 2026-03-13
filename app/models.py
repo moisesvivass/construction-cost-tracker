@@ -27,7 +27,7 @@ class Project(db.Model):
     start_date = db.Column(db.Date, nullable=False)
     status     = db.Column(db.String(20), default="active")
     user_id    = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    expenses   = db.relationship("Expense", backref="project", lazy=True)
+    expenses = db.relationship("Expense", backref="project", lazy=True, cascade="all, delete-orphan")
 
 
 class Expense(db.Model):

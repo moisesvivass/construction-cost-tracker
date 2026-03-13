@@ -240,6 +240,17 @@ def edit_project(project_id):
 
     return render_template("edit_project.html", project=project)
 
+# ── Delete project ───────────────────────────────────────────────────────────
+@main.route("/project/<int:project_id>/delete", methods=["POST"])
+@login_required
+def delete_project(project_id):
+    project = Project.query.filter_by(id=project_id, user_id=current_user.id).first_or_404()
+
+    db.session.delete(project)
+    db.session.commit()
+
+    flash("Project deleted successfully!", "success")
+    return redirect(url_for("main.projects"))
 
 # ── Edit expense ─────────────────────────────────────────────────────────────
 @main.route("/expense/<int:expense_id>/edit", methods=["GET", "POST"])
