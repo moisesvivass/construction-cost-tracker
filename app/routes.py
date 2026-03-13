@@ -76,3 +76,21 @@ def delete_expense(expense_id):
 
     flash("Expense deleted successfully!", "success")
     return redirect(url_for("main.project_detail", project_id=project_id))
+
+# ── Edit project ─────────────────────────────────────────────────────────────
+@main.route("/project/<int:project_id>/edit", methods=["GET", "POST"])
+def edit_project(project_id):
+    project = Project.query.get_or_404(project_id)
+
+    if request.method == "POST":
+        project.name       = request.form["name"]
+        project.client     = request.form["client"]
+        project.budget     = float(request.form["budget"])
+        project.start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
+
+        db.session.commit()
+
+        flash("Project updated successfully!", "success")
+        return redirect(url_for("main.project_detail", project_id=project.id))
+
+    return render_template("edit_project.html", project=project)
