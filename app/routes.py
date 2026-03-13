@@ -74,6 +74,16 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("main.login"))
 
+@main.route("/demo-login")
+def demo_login():
+    demo_user = User.query.filter_by(email="demo@costtracker.com").first()
+    if not demo_user:
+        flash("Demo account not available.", "warning")
+        return redirect(url_for("main.login"))
+    login_user(demo_user)
+    flash("You are now viewing the demo account!", "info")
+    return redirect(url_for("main.projects"))
+
 
 # ── Projects ─────────────────────────────────────────────────────────────────
 @main.route("/")
