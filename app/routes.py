@@ -94,3 +94,21 @@ def edit_project(project_id):
         return redirect(url_for("main.project_detail", project_id=project.id))
 
     return render_template("edit_project.html", project=project)
+
+# ── Edit expense ─────────────────────────────────────────────────────────────
+@main.route("/expense/<int:expense_id>/edit", methods=["GET", "POST"])
+def edit_expense(expense_id):
+    expense = Expense.query.get_or_404(expense_id)
+
+    if request.method == "POST":
+        expense.description = request.form["description"]
+        expense.category    = request.form["category"]
+        expense.amount      = float(request.form["amount"])
+        expense.date        = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+
+        db.session.commit()
+
+        flash("Expense updated successfully!", "success")
+        return redirect(url_for("main.project_detail", project_id=expense.project_id))
+
+    return render_template("edit_expense.html", expense=expense)

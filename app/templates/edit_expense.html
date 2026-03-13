@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Edit Expense — CostTracker{% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold mb-0">
+    <i class="bi bi-pencil-square text-warning"></i> Edit Expense
+  </h2>
+  <a href="{{ url_for('main.project_detail', project_id=expense.project_id) }}" 
+     class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Back to Project
+  </a>
+</div>
+
+<!-- Edit Form -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form action="{{ url_for('main.edit_expense', expense_id=expense.id) }}" method="POST">
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <label class="form-label">Description</label>
+          <input type="text" name="description" class="form-control"
+                 value="{{ expense.description }}" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-select" required>
+            <option value="" disabled>Select...</option>
+            <option value="Materials"  {{ 'selected' if expense.category == 'Materials' }}>Materials</option>
+            <option value="Labor"      {{ 'selected' if expense.category == 'Labor' }}>Labor</option>
+            <option value="Tools"      {{ 'selected' if expense.category == 'Tools' }}>Tools</option>
+            <option value="Transport"  {{ 'selected' if expense.category == 'Transport' }}>Transport</option>
+            <option value="Other"      {{ 'selected' if expense.category == 'Other' }}>Other</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Amount ($)</label>
+          <input type="number" name="amount" class="form-control"
+                 value="{{ expense.amount }}" step="0.01" min="0" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Date</label>
+          <input type="date" name="date" class="form-control"
+                 value="{{ expense.date }}" required>
+        </div>
+
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-warning fw-semibold">
+          <i class="bi bi-save"></i> Save Changes
+        </button>
+        <a href="{{ url_for('main.project_detail', project_id=expense.project_id) }}" 
+           class="btn btn-outline-secondary">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -23,8 +23,8 @@
     </h2>
     <span class="text-muted">{{ project.client }}</span>
   </div>
- <div class="d-flex gap-2">
-    <a href="{{ url_for('main.edit_project', project_id=project.id) }}" 
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('main.edit_project', project_id=project.id) }}"
        class="btn btn-warning btn-sm">
       <i class="bi bi-pencil-square"></i> Edit Project
     </a>
@@ -127,7 +127,7 @@
             <th>Date</th>
             <th>Description</th>
             <th>Category</th>
-               <th class="text-end">Amount</th>
+            <th class="text-end">Amount</th>
             <th></th>
           </tr>
         </thead>
@@ -139,8 +139,13 @@
             <td>
               <span class="badge bg-secondary">{{ expense.category }}</span>
             </td>
-          <td class="text-end fw-semibold">${{ "%.2f"|format(expense.amount) }}</td>
+            <td class="text-end fw-semibold">${{ "%.2f"|format(expense.amount) }}</td>
             <td class="text-end">
+              <!-- Edit button -->
+              <a href="{{ url_for('main.edit_expense', expense_id=expense.id) }}"
+                 class="btn btn-outline-warning btn-sm">
+                <i class="bi bi-pencil"></i>
+              </a>
               <!-- Trigger modal -->
               <button type="button" class="btn btn-outline-danger btn-sm"
                       data-bs-toggle="modal"
@@ -177,7 +182,8 @@
         <tfoot class="table-light">
           <tr>
             <td colspan="3" class="fw-bold text-end">Total</td>
-<td class="text-end fw-bold">${{ "%.2f"|format(total_spent) }}</td>          </tr>
+            <td class="text-end fw-bold">${{ "%.2f"|format(total_spent) }}</td>
+          </tr>
         </tfoot>
       </table>
     {% else %}
