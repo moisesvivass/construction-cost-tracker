@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import db
-from app.models import Project, Expense   # 👈 agregamos Expense
+from app.models import Project, Expense
 from datetime import datetime
 
 main = Blueprint("main", __name__)
@@ -20,10 +20,30 @@ def projects():
 @main.route("/projects/new", methods=["GET", "POST"])
 def new_project():
     if request.method == "POST":
-        name = request.form["name"]
-        client = request.form["client"]
-        budget = float(request.form["budget"])
-        start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
+        name   = request.form["name"].strip()
+        client = request.form["client"].strip()
+
+        if not name or not client:
+            flash("Name and client are required.", "danger")
+            return redirect(url_for("main.new_project"))
+
+        if len(name) > 100 or len(client) > 100:
+            flash("Name and client must be under 100 characters.", "danger")
+            return redirect(url_for("main.new_project"))
+
+        try:
+            budget = float(request.form["budget"])
+            if budget <= 0:
+                raise ValueError
+        except ValueError:
+            flash("Budget must be a positive number.", "danger")
+            return redirect(url_for("main.new_project"))
+
+        try:
+            start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format.", "danger")
+            return redirect(url_for("main.new_project"))
 
         project = Project(name=name, client=client, budget=budget, start_date=start_date)
         db.session.add(project)
@@ -35,22 +55,42 @@ def new_project():
     return render_template("new_project.html")
 
 
-# ── NEW: Project detail ──────────────────────────────────────────────────────
+# ── Project detail ───────────────────────────────────────────────────────────
 @main.route("/project/<int:project_id>")
 def project_detail(project_id):
     project = Project.query.get_or_404(project_id)
     return render_template("project_detail.html", project=project)
 
 
-# ── NEW: Add expense ─────────────────────────────────────────────────────────
+# ── Add expense ──────────────────────────────────────────────────────────────
 @main.route("/project/<int:project_id>/add-expense", methods=["POST"])
 def add_expense(project_id):
     project = Project.query.get_or_404(project_id)
 
-    description = request.form["description"]
+    description = request.form["description"].strip()
     category    = request.form["category"]
-    amount      = float(request.form["amount"])
-    date        = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+
+    if not description:
+        flash("Description is required.", "danger")
+        return redirect(url_for("main.project_detail", project_id=project_id))
+
+    if len(description) > 200:
+        flash("Description must be under 200 characters.", "danger")
+        return redirect(url_for("main.project_detail", project_id=project_id))
+
+    try:
+        amount = float(request.form["amount"])
+        if amount <= 0:
+            raise ValueError
+    except ValueError:
+        flash("Amount must be a positive number.", "danger")
+        return redirect(url_for("main.project_detail", project_id=project_id))
+
+    try:
+        date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+    except ValueError:
+        flash("Invalid date format.", "danger")
+        return redirect(url_for("main.project_detail", project_id=project_id))
 
     expense = Expense(
         description = description,
@@ -65,6 +105,7 @@ def add_expense(project_id):
     flash("Expense added successfully!", "success")
     return redirect(url_for("main.project_detail", project_id=project.id))
 
+
 # ── Delete expense ───────────────────────────────────────────────────────────
 @main.route("/expense/<int:expense_id>/delete", methods=["POST"])
 def delete_expense(expense_id):
@@ -77,16 +118,42 @@ def delete_expense(expense_id):
     flash("Expense deleted successfully!", "success")
     return redirect(url_for("main.project_detail", project_id=project_id))
 
+
 # ── Edit project ─────────────────────────────────────────────────────────────
 @main.route("/project/<int:project_id>/edit", methods=["GET", "POST"])
 def edit_project(project_id):
     project = Project.query.get_or_404(project_id)
 
     if request.method == "POST":
-        project.name       = request.form["name"]
-        project.client     = request.form["client"]
-        project.budget     = float(request.form["budget"])
-        project.start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
+        name   = request.form["name"].strip()
+        client = request.form["client"].strip()
+
+        if not name or not client:
+            flash("Name and client are required.", "danger")
+            return redirect(url_for("main.edit_project", project_id=project_id))
+
+        if len(name) > 100 or len(client) > 100:
+            flash("Name and client must be under 100 characters.", "danger")
+            return redirect(url_for("main.edit_project", project_id=project_id))
+
+        try:
+            budget = float(request.form["budget"])
+            if budget <= 0:
+                raise ValueError
+        except ValueError:
+            flash("Budget must be a positive number.", "danger")
+            return redirect(url_for("main.edit_project", project_id=project_id))
+
+        try:
+            start_date = datetime.strptime(request.form["start_date"], "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format.", "danger")
+            return redirect(url_for("main.edit_project", project_id=project_id))
+
+        project.name       = name
+        project.client     = client
+        project.budget     = budget
+        project.start_date = start_date
 
         db.session.commit()
 
@@ -95,16 +162,42 @@ def edit_project(project_id):
 
     return render_template("edit_project.html", project=project)
 
+
 # ── Edit expense ─────────────────────────────────────────────────────────────
 @main.route("/expense/<int:expense_id>/edit", methods=["GET", "POST"])
 def edit_expense(expense_id):
     expense = Expense.query.get_or_404(expense_id)
 
     if request.method == "POST":
-        expense.description = request.form["description"]
-        expense.category    = request.form["category"]
-        expense.amount      = float(request.form["amount"])
-        expense.date        = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+        description = request.form["description"].strip()
+        category    = request.form["category"]
+
+        if not description:
+            flash("Description is required.", "danger")
+            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+
+        if len(description) > 200:
+            flash("Description must be under 200 characters.", "danger")
+            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+
+        try:
+            amount = float(request.form["amount"])
+            if amount <= 0:
+                raise ValueError
+        except ValueError:
+            flash("Amount must be a positive number.", "danger")
+            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+
+        try:
+            date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format.", "danger")
+            return redirect(url_for("main.edit_expense", expense_id=expense_id))
+
+        expense.description = description
+        expense.category    = category
+        expense.amount      = amount
+        expense.date        = date
 
         db.session.commit()
 
