@@ -46,6 +46,7 @@ def register():
 
 
 @main.route("/login", methods=["GET", "POST"])
+@limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("main.projects"))
