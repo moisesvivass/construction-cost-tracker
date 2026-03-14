@@ -96,8 +96,26 @@ def index():
 @main.route("/projects")
 @login_required
 def projects():
-    all_projects = Project.query.filter_by(user_id=current_user.id).all()
-    return render_template("projects.html", projects=all_projects)
+    search = request.args.get("search", "").strip()
+    status = request.args.get("status", "all")
+
+    query = Project.query.filter_by(user_id=current_user.id)
+
+    if search:
+        query = query.filter(
+            db.or_(
+                Project.name.ilike(f"%{search}%"),
+                Project.client.ilike(f"%{search}%")
+            )
+        )
+
+    if status != "all":
+        query = query.filter_by(status=status)
+
+    all_projects = query.all()
+
+    return render_template("projects.html", projects=all_projects,
+                           search=search, status=status)
 
 
 @main.route("/projects/new", methods=["GET", "POST"])

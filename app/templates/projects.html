@@ -23,6 +23,35 @@
     </a>
 </div>
 
+<!-- Search & Filter -->
+<form method="GET" action="{{ url_for('main.projects') }}" class="mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" class="form-control"
+                       placeholder="Search by name or client..."
+                       value="{{ search }}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="btn-group w-100" role="group">
+                <a href="{{ url_for('main.projects', search=search, status='all') }}"
+                   class="btn {{ 'btn-dark' if status == 'all' else 'btn-outline-dark' }}">All</a>
+                <a href="{{ url_for('main.projects', search=search, status='active') }}"
+                   class="btn {{ 'btn-dark' if status == 'active' else 'btn-outline-dark' }}">Active</a>
+                <a href="{{ url_for('main.projects', search=search, status='completed') }}"
+                   class="btn {{ 'btn-dark' if status == 'completed' else 'btn-outline-dark' }}">Completed</a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-warning w-100">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </div>
+</form>
+
 {% if projects %}
 <div class="row">
     {% for project in projects %}
