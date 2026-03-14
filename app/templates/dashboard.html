@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — CostTracker{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="mb-4">
+    <p class="text-muted mb-1" style="font-size: 13px;">Welcome back</p>
+    <h1 class="fw-bold mb-0" style="font-size: 24px;">Dashboard</h1>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="label">Total projects</div>
+            <div class="value">{{ total_projects }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="label">Total budget</div>
+            <div class="value">${{ "{:,.0f}".format(total_budget) }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="label">Total spent</div>
+            <div class="value" style="color: #e09510;">${{ "{:,.0f}".format(total_spent) }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="label">Remaining</div>
+            <div class="value" style="color: {{ '#3b6d11' if total_remaining >= 0 else '#a32d2d' }};">
+                ${{ "{:,.0f}".format(total_remaining) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+
+    <!-- Budget vs Spent per project -->
+    <div class="col-md-8">
+        <div class="card-ct h-100">
+            <p class="fw-semibold mb-3" style="font-size: 14px;">Budget vs spent per project</p>
+            {% if projects %}
+                {% for project in projects %}
+                {% set spent = project.expenses | sum(attribute='amount') %}
+                {% set pct = [(spent / project.budget * 100), 100] | min if project.budget > 0 else 0 %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="font-size: 12px; color: #555;">
+                            <a href="{{ url_for('main.project_detail', project_id=project.id) }}"
+                               style="color: #555; text-decoration: none;">{{ project.name }}</a>
+                        </span>
+                        <span style="font-size: 12px; color: #888;">
+                            ${{ "{:,.0f}".format(spent) }} / ${{ "{:,.0f}".format(project.budget) }}
+                        </span>
+                    </div>
+                    <div style="background: #f0f0ee; border-radius: 4px; height: 8px;">
+                        <div style="width: {{ pct }}%; background: {{ '#e24b4a' if pct >= 90 else '#f5a623' }}; height: 8px; border-radius: 4px; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted small">No projects yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Expenses by category -->
+    <div class="col-md-4">
+        <div class="card-ct h-100">
+            <p class="fw-semibold mb-3" style="font-size: 14px;">Expenses by category</p>
+            {% if category_totals %}
+                {% set total_expenses = category_totals.values() | sum %}
+                {% set colors = {'Materials': '#f5a623', 'Labor': '#378add', 'Tools': '#639922', 'Transport': '#1d9e75', 'Other': '#888780'} %}
+                <canvas id="categoryChart" height="200"></canvas>
+                <div class="mt-3">
+                    {% for cat, amount in category_totals.items() | sort(attribute='1', reverse=True) %}
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div style="width: 10px; height: 10px; border-radius: 2px; background: {{ colors.get(cat, '#888') }}; flex-shrink: 0;"></div>
+                        <span style="font-size: 12px; color: #555; flex: 1;">{{ cat }}</span>
+                        <span style="font-size: 12px; font-weight: 600; color: #1a1a1a;">
+                            {{ "{:.0f}".format(amount / total_expenses * 100) }}%
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted small">No expenses yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Recent Projects Table -->
+<div class="card-ct">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="fw-semibold mb-0" style="font-size: 14px;">Recent projects</p>
+        <a href="{{ url_for('main.projects') }}" style="font-size: 12px; color: #f5a623; text-decoration: none;">
+            View all →
+        </a>
+    </div>
+    {% if recent_projects %}
+    <table class="table mb-0" style="font-size: 13px;">
+        <thead>
+            <tr style="border-bottom: 1px solid #eee;">
+                <th class="fw-normal text-muted pb-2 ps-0">Project</th>
+                <th class="fw-normal text-muted pb-2">Client</th>
+                <th class="fw-normal text-muted pb-2 text-end">Budget</th>
+                <th class="fw-normal text-muted pb-2 text-end">Spent</th>
+                <th class="fw-normal text-muted pb-2 text-center">Status</th>
+                <th class="fw-normal text-muted pb-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in recent_projects %}
+            {% set spent = project.expenses | sum(attribute='amount') %}
+            <tr style="border-bottom: 0.5px solid #f0f0ee;">
+                <td class="py-3 ps-0 fw-semibold" style="color: #1a1a1a;">{{ project.name }}</td>
+                <td class="py-3 text-muted">{{ project.client }}</td>
+                <td class="py-3 text-end">${{ "{:,.0f}".format(project.budget) }}</td>
+                <td class="py-3 text-end" style="color: {{ '#e09510' if spent > 0 else '#888' }};">
+                    ${{ "{:,.0f}".format(spent) }}
+                </td>
+                <td class="py-3 text-center">
+                    <span class="{{ 'badge-active' if project.status == 'active' else 'badge-completed' }}">
+                        {{ project.status }}
+                    </span>
+                </td>
+                <td class="py-3 text-end">
+                    <a href="{{ url_for('main.project_detail', project_id=project.id) }}"
+                       style="font-size: 12px; color: #f5a623; text-decoration: none;">View →</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted small">No projects yet. <a href="{{ url_for('main.new_project') }}">Create your first one!</a></p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% if category_totals %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const colors = {'Materials': '#f5a623', 'Labor': '#378add', 'Tools': '#639922', 'Transport': '#1d9e75', 'Other': '#888780'};
+    const data = {{ category_totals | tojson }};
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: Object.keys(data).map(k => colors[k] || '#888'),
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            cutout: '70%',
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

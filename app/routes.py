@@ -11,7 +11,7 @@ main = Blueprint("main", __name__)
 @main.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("main.projects"))
+        return redirect(url_for("main.dashboard"))
 
     if request.method == "POST":
         username = request.form["username"].strip()
@@ -49,7 +49,7 @@ def register():
 @limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("main.projects"))
+        return redirect(url_for("main.dashboard"))
 
     if request.method == "POST":
         email    = request.form["email"].strip().lower()
@@ -63,7 +63,7 @@ def login():
 
         login_user(user)
         flash(f"Welcome back, {user.username}!", "success")
-        return redirect(url_for("main.projects"))
+        return redirect(url_for("main.dashboard"))
 
     return render_template("login.html")
 
@@ -75,6 +75,7 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("main.login"))
 
+
 @main.route("/demo-login")
 @limiter.limit("5 per minute")
 def demo_login():
@@ -84,15 +85,44 @@ def demo_login():
         return redirect(url_for("main.login"))
     login_user(demo_user)
     flash("You are now viewing the demo account!", "info")
-    return redirect(url_for("main.projects"))
+    return redirect(url_for("main.dashboard"))
+
+
+# ── Dashboard ────────────────────────────────────────────────────────────────
+@main.route("/")
+def index():
+    return redirect(url_for("main.dashboard"))
+
+
+@main.route("/dashboard")
+@login_required
+def dashboard():
+    projects = Project.query.filter_by(user_id=current_user.id).all()
+
+    total_projects  = len(projects)
+    total_budget    = sum(p.budget for p in projects)
+    total_spent     = sum(sum(e.amount for e in p.expenses) for p in projects)
+    total_remaining = total_budget - total_spent
+
+    category_totals = {}
+    for project in projects:
+        for expense in project.expenses:
+            category_totals[expense.category] = category_totals.get(expense.category, 0) + expense.amount
+
+    recent_projects = sorted(projects, key=lambda p: p.start_date, reverse=True)[:5]
+
+    return render_template("dashboard.html",
+        total_projects  = total_projects,
+        total_budget    = total_budget,
+        total_spent     = total_spent,
+        total_remaining = total_remaining,
+        category_totals = category_totals,
+        projects        = projects,
+        recent_projects = recent_projects,
+    )
 
 
 # ── Projects ─────────────────────────────────────────────────────────────────
-@main.route("/")
-def index():
-    return redirect(url_for("main.projects"))
-
-
 @main.route("/projects")
 @login_required
 def projects():
