@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db
+from app import db, limiter
 from app.models import Project, Expense, User
 from datetime import datetime
 
@@ -75,6 +75,7 @@ def logout():
     return redirect(url_for("main.login"))
 
 @main.route("/demo-login")
+@limiter.limit("5 per minute")
 def demo_login():
     demo_user = User.query.filter_by(email="demo@costtracker.com").first()
     if not demo_user:
