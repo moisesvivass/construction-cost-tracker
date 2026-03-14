@@ -312,7 +312,75 @@ def delete_project(project_id):
     flash("Project deleted successfully!", "success")
     return redirect(url_for("main.projects"))
 
+# ── Export ───────────────────────────────────────────────────────────────────
+@main.route("/project/<int:project_id>/export")
+@login_required
+def export_project(project_id):
+    import csv
+    import io
+    from flask import Response
 
+    project = Project.query.filter_by(id=project_id, user_id=current_user.id).first_or_404()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(["Project", "Client", "Budget", "Status", "Start Date"])
+    writer.writerow([project.name, project.client, project.budget, project.status, project.start_date])
+    writer.writerow([])
+    writer.writerow(["Date", "Description", "Category", "Amount"])
+
+    for expense in sorted(project.expenses, key=lambda e: e.date):
+        writer.writerow([expense.date, expense.description, expense.category, expense.amount])
+
+    writer.writerow([])
+    writer.writerow(["", "", "Total", sum(e.amount for e in project.expenses)])
+
+    output.seek(0)
+    filename = f"{project.name.replace(' ', '_')}_expenses.csv"
+
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
+@main.route("/dashboard/export")
+@login_required
+def export_all():
+    import csv
+    import io
+    from flask import Response
+
+    projects = Project.query.filter_by(user_id=current_user.id).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(["Project", "Client", "Budget", "Status", "Start Date", "Date", "Description", "Category", "Amount"])
+
+    for project in projects:
+        for expense in sorted(project.expenses, key=lambda e: e.date):
+            writer.writerow([
+                project.name,
+                project.client,
+                project.budget,
+                project.status,
+                project.start_date,
+                expense.date,
+                expense.description,
+                expense.category,
+                expense.amount
+            ])
+
+    output.seek(0)
+
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=all_projects.csv"}
+    )
 # ── Edit expense ─────────────────────────────────────────────────────────────
 @main.route("/expense/<int:expense_id>/edit", methods=["GET", "POST"])
 @login_required
