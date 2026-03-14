@@ -72,6 +72,7 @@
   </div>
   <div class="card-body">
     <form action="{{ url_for('main.add_expense', project_id=project.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="row g-3">
 
         <div class="col-md-4">
@@ -167,6 +168,7 @@
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                       <form action="{{ url_for('main.delete_expense', expense_id=expense.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-danger btn-sm">
                           <i class="bi bi-trash"></i> Delete
                         </button>
