@@ -1,6 +1,6 @@
-# 🏗️ CostTracker — Construction Cost Management
+# CostTracker — Construction Cost Management
 
-A full-stack construction cost tracking web application built with Flask. Manage projects, track expenses, and visualize budget performance — all in one clean, secure dashboard.
+A full-stack construction cost tracking web application built with Flask. Manage projects, track expenses and visualize budget performance in one clean and secure dashboard.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -10,7 +10,7 @@ A full-stack construction cost tracking web application built with Flask. Manage
 ![Projects](docs/screenshots/projects.png)
 
 ### 📁 Project Detail
-![Project Detail](docs/screenshots/project_detail.png)
+![Project Detail](docs/screenshots/projectdetails.png)
 
 ### 🔐 Login
 ![Login](docs/screenshots/login.png)
