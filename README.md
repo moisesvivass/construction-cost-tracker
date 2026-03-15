@@ -1,6 +1,11 @@
 # 🏗️ CostTracker — Construction Cost Management
 
-A full-stack construction cost tracking web application built with Flask. Manage projects, track expenses and visualize budget performance in one clean and secure dashboard.
+![Python](https://img.shields.io/badge/Python-3.14-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-3.0.3-black?logo=flask)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Railway-blue?logo=postgresql)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+Replacing error-prone spreadsheets with a centralized cost management tool built for contractors and project managers. Track budgets, log expenses and visualize performance across all your construction projects in one secure dashboard.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -102,6 +107,34 @@ python run.py
 
 Visit `http://127.0.0.1:5000`
 
+## 🗄️ Database Schema
+```
+User
+├── id (PK)
+├── username
+├── email
+└── password (hashed)
+    │
+    └── has many Projects
+            ├── id (PK)
+            ├── name
+            ├── client
+            ├── budget
+            ├── start_date
+            ├── status
+            └── user_id (FK → User)
+                │
+                └── has many Expenses
+                        ├── id (PK)
+                        ├── description
+                        ├── category
+                        ├── amount
+                        ├── date
+                        └── project_id (FK → Project)
+```
+
+**Relationships:** User → Project (1:N) — Project → Expense (1:N) — Cascade delete enabled
+
 ## 📁 Project Structure
 ```
 construction-cost-tracker/
@@ -150,5 +183,9 @@ construction-cost-tracker/
 - [x] Demo mode with 10 realistic projects
 - [x] Deploy to Railway with PostgreSQL
 
-**Moises Vivas** — Built as a construction management + full-stack web development portfolio project.
-GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
+## 👨‍💻 Author
+
+**Moises Vivas** — Full-stack developer focused on building practical, secure web applications.
+Passionate about clean code, real-world problem solving, and continuous learning.
+
+- GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
