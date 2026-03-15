@@ -1,8 +1,16 @@
-# CostTracker — Construction Cost Management
+# 🏗️ CostTracker — Construction Cost Management
 
 A full-stack construction cost tracking web application built with Flask. Manage projects, track expenses and visualize budget performance in one clean and secure dashboard.
 
 ![Dashboard](docs/screenshots/dashboard.png)
+
+## 🚀 Live Demo
+
+🌐 **[https://web-production-d477f.up.railway.app](https://web-production-d477f.up.railway.app)**
+
+> **Demo credentials**
+> - Email: `demo@costtracker.com`
+> - Password: `demo1234`
 
 ## 📸 Screenshots
 
@@ -15,18 +23,13 @@ A full-stack construction cost tracking web application built with Flask. Manage
 ### 🔐 Login
 ![Login](docs/screenshots/login.png)
 
-## 🚀 Live Demo
-
-> **Demo credentials**
-> - Email: `demo@costtracker.com`
-> - Password: `demo1234`
-
 ## ✨ Features
 
 - **Dashboard** — Real-time overview with stat cards, budget vs spent progress bars, expenses by category donut chart, and recent projects table
 - **Project Management** — Full CRUD for projects with budget tracking and status management
 - **Expense Tracking** — Log expenses by category (Materials, Labor, Tools, Transport, Other)
 - **Search & Filter** — Search projects by name or client, filter by status (Active / Completed)
+- **CSV Export** — Download expenses per project or all projects at once
 - **Authentication** — Secure login and registration with Flask-Login
 - **Row-level Security** — Users only see their own data
 - **Demo Mode** — One-click demo account with 10 realistic Toronto construction projects
@@ -43,12 +46,13 @@ A full-stack construction cost tracking web application built with Flask. Manage
 ## 🛠️ Tech Stack
 
 - **Python 3 + Flask 3.0.3** — backend framework
-- **Flask-SQLAlchemy + SQLite** — database layer
+- **Flask-SQLAlchemy + PostgreSQL** — database layer
 - **Flask-Login** — session authentication
 - **Flask-WTF** — CSRF protection
 - **Flask-Limiter** — rate limiting
 - **Bootstrap 5 + Chart.js** — frontend UI and charts
 - **python-dotenv** — environment variable management
+- **Railway** — cloud deployment
 
 ## ⚙️ Setup Instructions
 
@@ -126,6 +130,8 @@ construction-cost-tracker/
 ├── config.py                  # Configuration class
 ├── run.py                     # App entry point
 ├── seed_demo.py               # Demo data seeder
+├── Procfile                   # Railway/Render process file
+├── render.yaml                # Render deployment config
 └── requirements.txt
 ```
 
@@ -140,9 +146,9 @@ construction-cost-tracker/
 - [x] Search & Filter projects
 - [x] CSRF protection on all forms
 - [x] Rate limiting on login routes
+- [x] CSV Export
 - [x] Demo mode with 10 realistic projects
-- [ ] Export to CSV / Excel
-- [ ] Deploy to Railway or Render
+- [x] Deploy to Railway with PostgreSQL
 
 **Moises Vivas** — Built as a construction management + full-stack web development portfolio project.
 GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
