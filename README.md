@@ -185,7 +185,6 @@ construction-cost-tracker/
 
 ## 👨‍💻 Author
 
-**Moises Vivas** — Full-stack developer focused on building practical, secure web applications.
-Passionate about clean code, real-world problem solving, and continuous learning.
+**Moises Vivas** — CS graduate building backend systems in Python · Toronto, Canada
 
 - GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
