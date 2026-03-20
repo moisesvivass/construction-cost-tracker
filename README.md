@@ -5,6 +5,19 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Railway-blue?logo=postgresql)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+# 🏗️ CostTracker — Construction Cost Management
+
+![Python](https://img.shields.io/badge/Python-3.14-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-3.0.3-black?logo=flask)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Railway-blue?logo=postgresql)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+> **The problem:** Small contractors track budgets in scattered spreadsheets leading to cost overruns discovered too late and no real-time visibility across projects.
+>
+> **What this solves:** A centralized dashboard where contractors instantly see which projects are over budget, before it becomes a crisis.
+
+Replacing error-prone spreadsheets with a centralized cost management tool built for contractors and project managers. Track budgets, log expenses and visualize performance across all your construction projects in one secure dashboard.
+
 Replacing error-prone spreadsheets with a centralized cost management tool built for contractors and project managers. Track budgets, log expenses and visualize performance across all your construction projects in one secure dashboard.
 
 ![Dashboard](docs/screenshots/dashboard.png)
