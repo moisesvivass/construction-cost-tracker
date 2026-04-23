@@ -198,7 +198,13 @@ construction-cost-tracker/
 
 ## 👨‍💻 Author
 
+<<<<<<< HEAD
 **Moises Vivas** — AI Application Developer · Python · Flask · PostgreSQL · Toronto, Canada
 
 - GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
 - LinkedIn: [linkedin.com/in/moisesvivas](https://linkedin.com/in/moisesvivas)
+=======
+**Moises Vivas** — Operations professional building data tools and web applications with Python and AI-assisted development · Toronto, Canada
+
+- GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
+>>>>>>> 17ebc8a72f699965f6c7171ad6cb5e74df7f3fe2
