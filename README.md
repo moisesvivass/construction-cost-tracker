@@ -198,6 +198,7 @@ construction-cost-tracker/
 
 ## 👨‍💻 Author
 
-**Moises Vivas** — CS graduate building backend systems in Python · Toronto, Canada
+**Moises Vivas** — AI Application Developer · Python · Flask · PostgreSQL · Toronto, Canada
 
 - GitHub: [github.com/moisesvivass](https://github.com/moisesvivass)
+- LinkedIn: [linkedin.com/in/moisesvivas](https://linkedin.com/in/moisesvivas)
